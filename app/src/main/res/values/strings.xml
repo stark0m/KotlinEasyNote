@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">KotlinEasyNote</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title">Title</string>
+    <string name="supporting_text">Support Text</string>
+    <string name="action">Action</string>
+</resources>

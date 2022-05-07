@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1028174205686",
+    "project_id": "kotlineasynote",
+    "storage_bucket": "kotlineasynote.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1028174205686:android:9e3070f337cbdda78992d7",
+        "android_client_info": {
+          "package_name": "com.example.kotlineasynote"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1028174205686-4dianu9br8so0uimn36unoeh556oqu6h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhwspYYazMMMEw-xzE3iwfEB-R8zdi2zU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1028174205686-4dianu9br8so0uimn36unoeh556oqu6h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
