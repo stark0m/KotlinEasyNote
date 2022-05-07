@@ -10,7 +10,7 @@ import com.example.kotlineasynote.entities.OneNote
 import com.example.kotlineasynote.ui.editnote.addoreditaction.ActionWithNote
 import com.example.kotlineasynote.ui.editnote.addoreditaction.ActonWintNoteAddImpl
 import com.example.kotlineasynote.ui.editnote.addoreditaction.ActonWintNoteEditImpl
-import com.example.kotlineasynote.ui.mainview.MainViewModel
+import com.example.kotlineasynote.ui.mainview.viewmodel.MainViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText

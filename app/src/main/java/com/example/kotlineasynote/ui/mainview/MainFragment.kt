@@ -13,9 +13,11 @@ import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import com.example.kotlineasynote.databinding.FragmentMainBinding
+import com.example.kotlineasynote.entities.CallBack
 import com.example.kotlineasynote.entities.OneNote
 import com.example.kotlineasynote.ui.RepositorySharedImpl
 import com.example.kotlineasynote.ui.editnote.ModalBottomSheet
+import com.example.kotlineasynote.ui.mainview.viewmodel.MainViewModel
 import com.example.kotlineasynote.ui.mainview.viewmodel.ViewModelPresenter
 
 const val EDIT = "EDIT"
@@ -67,6 +69,14 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        model.init(object :CallBack<Boolean>{
+            override fun onSuccess(data: Boolean) {
+
+            }
+        })
+
+
         initRecycler()
 
         recyclerAdapter.clickedNote = object : RecyclerViewAdapter.ClickedNote {
@@ -79,9 +89,10 @@ class MainFragment : Fragment() {
         binding.floatingActionButton.setOnClickListener {
             model.addNoteClicked()
         }
-
-
         initListeners()
+
+
+
 
     }
 
@@ -110,84 +121,3 @@ class MainFragment : Fragment() {
 
 }
 
-class MainViewModel : ViewModel(), ViewModelPresenter {
-
-    var repository = RepositorySharedImpl()
-    var indicator=false
-//
-
-    val data: MutableLiveData<MutableList<OneNote>> by lazy {
-        MutableLiveData<MutableList<OneNote>>().also {
-            it.value = repository.getData()
-        }
-
-    }
-    val isNeedToEdit: MutableLiveData<OneNote> by lazy { MutableLiveData<OneNote>().also {
-        it.value= OneNote()
-    } }
-
-    val isNeedToAdd: MutableLiveData<OneNote> by lazy { MutableLiveData<OneNote>().also {
-        it.value= OneNote()
-    } }
-
-
-    fun getNotes(): LiveData<MutableList<OneNote>> {
-        return data
-    }
-
-
-
-    override fun editNoteClicked(note: OneNote) {
-
-        indicator = true
-        isNeedToEdit.value=note
-        indicator = false
-//        viewFragment.openEditWindow(note)
-
-    }
-
-
-    override fun addNoteClicked() {
-        indicator = true
-        isNeedToAdd.value= OneNote()
-        indicator = false
-//        viewFragment.openAddWindow()
-    }
-    override fun deleteNoteClicked(note: OneNote) {
-
-        deleteNote(note)
-    }
-
-    override fun addNote(newNote: OneNote) {
-        data.value?.add(0, newNote)
-        data.value = data.value
-
-        repository.addNote(newNote)
-    }
-
-
-
-
-    override fun deleteNote(note: OneNote) {
-        val indexOldNote= data.value?.indexOf(note)
-        data.value?.removeAt(indexOldNote!!)
-        data.value = data.value
-
-        repository.deleteNote(note)
-    }
-
-
-
-    override fun editNote(note: OneNote, newNote: OneNote) {
-        val indexOldNote= data.value?.indexOf(note)
-        data.value?.set(indexOldNote!!,newNote)
-        data.value = data.value
-        repository.updateNote(note,newNote)
-    }
-
-
-
-
-
-
-}
