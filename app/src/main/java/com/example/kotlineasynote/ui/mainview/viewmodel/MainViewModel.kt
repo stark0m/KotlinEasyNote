@@ -5,21 +5,28 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.kotlineasynote.entities.CallBack
 import com.example.kotlineasynote.entities.OneNote
+import com.example.kotlineasynote.ui.RepositoryFirebaseImpl
 import com.example.kotlineasynote.ui.RepositorySharedImpl
 
 class MainViewModel : ViewModel(), ViewModelPresenter {
 
-    var repository = RepositorySharedImpl()
+    var repository = RepositoryFirebaseImpl()
+//    var repository = RepositorySharedImpl()
     var indicator=false
 //
 
-    val data: MutableLiveData<MutableList<OneNote>> by lazy {
+/*    val data: MutableLiveData<MutableList<OneNote>> by lazy {
         MutableLiveData<MutableList<OneNote>>().also {
             var temp1  = MutableList<OneNote>(1,{
                 OneNote()
             })
             temp1.add(OneNote())
             it.value = temp1
+        }
+    }*/
+val data: MutableLiveData<MutableList<OneNote>> by lazy {
+        MutableLiveData<MutableList<OneNote>>().also {
+            it.value = mutableListOf()
         }
     }
 
