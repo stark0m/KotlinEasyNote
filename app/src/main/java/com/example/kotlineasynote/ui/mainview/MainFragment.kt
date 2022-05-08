@@ -1,6 +1,11 @@
 package com.example.kotlineasynote.ui.mainview
 
+import android.annotation.SuppressLint
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +19,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
+import com.example.kotlineasynote.R
 import com.example.kotlineasynote.databinding.FragmentMainBinding
 import com.example.kotlineasynote.entities.CallBack
 import com.example.kotlineasynote.entities.OneNote
@@ -21,6 +27,7 @@ import com.example.kotlineasynote.ui.RepositorySharedImpl
 import com.example.kotlineasynote.ui.editnote.ModalBottomSheet
 import com.example.kotlineasynote.ui.mainview.viewmodel.MainViewModel
 import com.example.kotlineasynote.ui.mainview.viewmodel.ViewModelPresenter
+import kotlin.math.roundToInt
 
 const val EDIT = "EDIT"
 const val ADD = "ADD"
@@ -40,6 +47,7 @@ class MainFragment : Fragment() {
 
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,6 +57,11 @@ class MainFragment : Fragment() {
         return view
     }
 
+    /**
+     * initRecycler() функция подготавливающая RecyclerView к показу
+     * внутри определяем лейаутменеджер, адаптер, поведение при свайпе (удаление элемета)
+     *
+     */
     private fun initRecycler() {
         model.getNotes().observe(viewLifecycleOwner, Observer<MutableList<OneNote>> {
             recyclerAdapter.data = it
@@ -56,20 +69,68 @@ class MainFragment : Fragment() {
 
         })
 
-
-
-
         binding.idRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), VERTICAL, false)
         binding.idRecyclerView.adapter = recyclerAdapter
 
-        val myCallback = object: ItemTouchHelper.SimpleCallback(0,
-            ItemTouchHelper.LEFT) {
+        val myCallback = object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT
+        ) {
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
-            ): Boolean =false
+            ): Boolean = false
+
+
+            @SuppressLint("UseCompatLoadingForDrawables")
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                super.onChildDraw(
+                    c, recyclerView, viewHolder,
+                    dX, dY, actionState, isCurrentlyActive
+                )
+
+                c.clipRect(
+                    viewHolder.itemView.width.toFloat() + dX,
+                    viewHolder.itemView.top.toFloat(),
+                    viewHolder.itemView.width.toFloat(),
+                    viewHolder.itemView.bottom.toFloat()
+                )
+
+                /**
+                 * iconSize- размер иконки отображаемой при свайпе
+                 * trashBinIcon - иконка для отображения удаления заметки
+                 */
+                val iconSize = viewHolder.itemView.bottom - viewHolder.itemView.top
+                val trashBinIcon = resources.getDrawable(
+                    R.drawable.ic_baseline_delete_sweep_24,
+                    null
+                )
+                val textMargin = resources.getDimension(R.dimen.text_margin)
+                    .roundToInt()
+                trashBinIcon.bounds = Rect(
+                    viewHolder.itemView.width - iconSize,
+                    viewHolder.itemView.top + textMargin,
+                    viewHolder.itemView.width - textMargin,
+                    viewHolder.itemView.bottom -
+                            textMargin
+                )
+
+                /**
+                 * отображаем иконку корзины если свайпнули заметку более чем на 1/3 экрана
+                 */
+                if (Math.abs(dX) > viewHolder.itemView.width / 3)
+                    trashBinIcon.draw(c)
+            }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
 
@@ -91,15 +152,14 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        model.init(object :CallBack<Boolean>{
+        /**
+         * model.init получает данные о заметках из репозитория
+         */
+        model.init(object : CallBack<Boolean> {
             override fun onSuccess(data: Boolean) {
 
             }
         })
-
-
-
-
 
 
         initRecycler()
@@ -111,20 +171,26 @@ class MainFragment : Fragment() {
 
         }
 
+        /**
+         * binding.floatingActionButton
+         * нажата кнопка добавления
+         */
         binding.floatingActionButton.setOnClickListener {
             model.addNoteClicked()
         }
         initListeners()
 
 
-
-
     }
 
+    /**
+     * initListeners()
+     * устанавливаем все слушатели VM
+     */
     private fun initListeners() {
         model.isNeedToEdit.observe(viewLifecycleOwner, Observer<OneNote> {
             val modalBottomSheet = ModalBottomSheet(EDIT, it)
-            if (model.indicator){
+            if (model.indicator) {
                 modalBottomSheet.show(parentFragmentManager, ModalBottomSheet.TAG)
             }
 
@@ -140,8 +206,6 @@ class MainFragment : Fragment() {
 
         })
     }
-
-
 
 
 }
