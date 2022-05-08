@@ -10,7 +10,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import com.example.kotlineasynote.databinding.FragmentMainBinding
 import com.example.kotlineasynote.entities.CallBack
@@ -60,6 +62,25 @@ class MainFragment : Fragment() {
         binding.idRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), VERTICAL, false)
         binding.idRecyclerView.adapter = recyclerAdapter
+
+        val myCallback = object: ItemTouchHelper.SimpleCallback(0,
+            ItemTouchHelper.LEFT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean =false
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
+                model.deleteNote(recyclerAdapter.data.get(viewHolder.adapterPosition))
+
+            }
+
+        }
+
+        val myHelper = ItemTouchHelper(myCallback)
+        myHelper.attachToRecyclerView(binding.idRecyclerView)
     }
 
     override fun onDestroyView() {
@@ -75,6 +96,10 @@ class MainFragment : Fragment() {
 
             }
         })
+
+
+
+
 
 
         initRecycler()
